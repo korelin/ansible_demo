@@ -1,0 +1,32 @@
+---
+- hosts: test
+  become: true
+  tasks:
+    - name: Install Packages
+      apt: name={{ item }} update_cache=yes state=latest
+      loop: [ 'nginx', 'vim', 'git', 'nodejs', 'npm' ]
+      become: yes
+      tags: [ 'setup' ]
+    - name: Virtualenv
+      apt: name=python3-virtualenv
+      become: yes
+    - name: Install dvc
+      pip:
+        name: dvc, jupyterhub
+        virtualenv: /home/ubuntu/python_venv/dev
+    - name: Install http-proxy package
+      npm:
+        name: configurable-http-proxy
+        global: yes
+    - name: Install Jupiterlab
+      pip:
+        name: jupyterlab, notebook
+        virtualenv: /home/ubuntu/python_venv/dev
+#    - name: Copy index page
+#      copy:
+#        src: index.html
+#        dest: /var/www/html/index.html
+#        owner: www-data
+#        group: www-data
+#        mode: '0644'
+#      tags: [ 'update', 'sync' ]
